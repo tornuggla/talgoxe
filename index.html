@@ -934,7 +934,9 @@
                 const formattedNumber = new Intl.NumberFormat('sv-SE', {
                     minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
                     maximumFractionDigits: 2
-                }).format(amount).replace(/\u00A0/g, ' ')
+                }).format(amount)
+                    .replace(/\u00A0/g, ' ')
+                    .replace(/[\u2212\u2012\u2013\u2014]/g, '-')
 
                 return `${formattedNumber} kr`
             }
