@@ -472,7 +472,8 @@
             <button class="nav-btn active" data-section="dashboard">Översikt</button>
             <button class="nav-btn" data-section="assets">Tillgångar</button>
             <button class="nav-btn" data-section="liabilities">Skulder</button>
-            <button class="nav-btn" data-section="budget">Budget</button>
+            <button class="nav-btn" data-section="income">Inkomster</button>
+            <button class="nav-btn" data-section="expenses">Utgifter</button>
         </nav>
         </div>
     </header>
@@ -615,8 +616,8 @@
             </div>
         </section>
 
-        <!-- Budget Section -->
-        <section id="budget" class="section">
+        <!-- Income Section -->
+        <section id="income" class="section">
             <div class="card">
                 <h2>Lägg till månadsinkomst</h2>
                 <form id="incomeForm">
@@ -640,8 +641,11 @@
                     <p class="empty-state">Ingen månadsinkomst ännu. Lägg till en ovan.</p>
                 </div>
             </div>
+        </section>
 
-            <div class="card" style="margin-top: 2rem;">
+        <!-- Expenses Section -->
+        <section id="expenses" class="section">
+            <div class="card">
                 <h2>Lägg till månatliga utgifter</h2>
                 <form id="expenseForm">
                     <div class="form-row">
@@ -1276,7 +1280,8 @@
                 this.renderDashboard()
                 this.renderAssets()
                 this.renderLiabilities()
-                this.renderBudget()
+                this.renderIncome()
+                this.renderExpenses()
             }
 
             renderDashboard() {
@@ -1481,8 +1486,7 @@
                 }
             }
 
-            renderBudget() {
-                // Income
+            renderIncome() {
                 if (this.income.length === 0) {
                     document.getElementById('incomeList').innerHTML = '<p class="empty-state">Ingen månadsinkomst ännu. Lägg till en ovan.</p>'
                 } else {
@@ -1513,8 +1517,9 @@
                         </table>
                     `
                 }
+            }
 
-                // Expenses
+            renderExpenses() {
                 if (this.expenses.length === 0) {
                     document.getElementById('expenseList').innerHTML = '<p class="empty-state">Inga månatliga utgifter ännu. Lägg till en ovan.</p>'
                 } else {
