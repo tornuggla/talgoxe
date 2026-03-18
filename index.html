@@ -121,21 +121,108 @@
         }
 
         /* Dashboard */
-        .dashboard-grid {
+        .report-layout {
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
-            margin-bottom: 2rem;
         }
 
-        @media (min-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(3, 1fr);
+        @media (min-width: 960px) {
+            .report-layout {
+                grid-template-columns: 1fr 1fr;
+                align-items: start;
             }
         }
 
-        .dashboard-grid .card.full-width {
-            grid-column: 1 / -1;
+        .financial-statement {
+            background-color: white;
+            border: 1px solid #d8e0e3;
+            padding: 1.5rem;
+        }
+
+        .statement-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .statement-columns {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .statement-columns {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .statement-subtitle {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.75rem;
+        }
+
+        .statement-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #d8e0e3;
+            border-radius: 0;
+        }
+
+        .statement-table th,
+        .statement-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #e3e8eb;
+            font-size: 0.95rem;
+        }
+
+        .statement-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .statement-table tbody tr:hover {
+            background-color: transparent;
+        }
+
+        .statement-table td:last-child,
+        .statement-table th:last-child {
+            text-align: right;
+        }
+
+        .statement-total-row td {
+            font-weight: 700;
+            border-top: 2px solid #c8d4d8;
+            background-color: #fafbfb;
+        }
+
+        .statement-net-row td {
+            font-weight: 700;
+            font-size: 1rem;
+            border-top: 2px solid #b8c7cc;
+            background-color: #fafbfb;
+        }
+
+        .statement-value-positive {
+            color: var(--success);
+        }
+
+        .statement-value-negative {
+            color: var(--danger);
+        }
+
+        .statement-empty {
+            padding: 1rem;
+            border: 1px solid #d8e0e3;
+            color: var(--text-light);
+            font-size: 0.95rem;
         }
 
         .card {
@@ -481,63 +568,16 @@
     <main class="container">
         <!-- Dashboard Section -->
         <section id="dashboard" class="section active">
-            <div class="dashboard-grid">
-                <div class="card">
-                    <h2>Tillgångar</h2>
-                    <div class="card-stat" id="totalAssets">0 kr</div>
-                    <div class="card-label">Kontanter, sparande, investeringar och fastighet</div>
-                </div>
+            <div class="report-layout">
+                <section class="financial-statement">
+                    <h2 class="statement-title">Balansräkning</h2>
+                    <div id="balanceSheet"></div>
+                </section>
 
-                <div class="card">
-                    <h2>Skulder</h2>
-                    <div class="card-stat amount negative" id="totalLiabilities">0 kr</div>
-                    <div class="card-label">Bolån, billån, övriga lån och kreditkort</div>
-                </div>
-
-                <div class="card">
-                    <h2>Nettovärde</h2>
-                    <div class="card-stat" id="netWorth">0 kr</div>
-                    <div class="card-label">Tillgångar minus skulder</div>
-                </div>
-
-                <div class="card full-width">
-                    <h2>Balansräkning</h2>
-                    <div style="margin-top: 1rem;">
-                        <div class="summary-row">
-                            <span>Tillgångar</span>
-                            <span class="summary-value amount positive" id="balanceAssets">0 kr</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Skulder</span>
-                            <span class="summary-value amount negative" id="balanceLiabilities">0 kr</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Nettovärde</span>
-                            <span class="summary-value" id="balanceNetWorth" style="color: var(--accent);">0 kr</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Fördelning av tillgångar</h2>
-                <div id="assetsBreakdown" class="category-list">
-                    <p class="empty-state" style="padding: 2rem;">Inga tillgångar ännu. Lägg till din första post för att komma igång.</p>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 2rem;">
-                <h2>Fördelning av skulder</h2>
-                <div id="liabilitiesBreakdown" class="category-list">
-                    <p class="empty-state" style="padding: 2rem;">Inga skulder ännu. Lägg till din första post för att komma igång.</p>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 2rem;">
-                <h2>Budgetöversikt</h2>
-                <div id="budgetBreakdown">
-                    <p class="empty-state" style="padding: 2rem;">Inga budgetposter ännu. Skapa månadsinkomst och månatliga utgifter.</p>
-                </div>
+                <section class="financial-statement">
+                    <h2 class="statement-title">Resultaträkning</h2>
+                    <div id="incomeStatement"></div>
+                </section>
             </div>
         </section>
 
@@ -1285,87 +1325,100 @@
             }
 
             renderDashboard() {
-                // Update totals
                 const totalAssets = this.calculateTotalAssets()
                 const totalLiabilities = this.calculateTotalLiabilities()
                 const netWorth = totalAssets - totalLiabilities
                 const income = this.calculateTotalIncome()
                 const expenses = this.calculateTotalExpenses()
+                const assetCategories = [
+                    { key: 'cash', label: 'Kontanter' },
+                    { key: 'savings', label: 'Sparande' },
+                    { key: 'investments', label: 'Investeringar' },
+                    { key: 'property', label: 'Fastighet' },
+                    { key: 'other', label: 'Övrigt' }
+                ]
+                const liabilityCategories = [
+                    { key: 'mortgage', label: 'Bolån' },
+                    { key: 'car-loan', label: 'Billån' },
+                    { key: 'other-loans', label: 'Övriga lån' },
+                    { key: 'credit-card', label: 'Kreditkort' }
+                ]
 
-                document.getElementById('totalAssets').textContent = this.formatCurrency(totalAssets)
-                document.getElementById('totalLiabilities').textContent = this.formatCurrency(totalLiabilities)
-                document.getElementById('netWorth').textContent = this.formatCurrency(netWorth)
-                document.getElementById('balanceAssets').textContent = this.formatCurrency(totalAssets)
-                document.getElementById('balanceLiabilities').textContent = this.formatCurrency(totalLiabilities)
-                document.getElementById('balanceNetWorth').textContent = this.formatCurrency(netWorth)
-
-                // Assets breakdown
-                if (this.assets.length === 0) {
-                    document.getElementById('assetsBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">Inga tillgångar ännu. Lägg till din första post för att komma igång.</p>'
-                } else {
-                    document.getElementById('assetsBreakdown').innerHTML = this.assets.map(asset => `
-                        <div class="category-item">
-                            <div>
-                                <div class="category-name">${asset.name}</div>
-                                <div class="card-label">${this.getAssetCategoryLabel(asset.category)}</div>
-                            </div>
-                            <div class="category-amount">${this.formatCurrency(asset.value)}</div>
-                        </div>
-                    `).join('')
+                const getCategoryTotal = (items, categoryKey) => {
+                    return items
+                        .filter(item => item.category === categoryKey)
+                        .reduce((sum, item) => sum + item.value, 0)
                 }
 
-                // Liabilities breakdown
-                if (this.liabilities.length === 0) {
-                    document.getElementById('liabilitiesBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">Inga skulder ännu. Lägg till din första post för att komma igång.</p>'
-                } else {
-                    document.getElementById('liabilitiesBreakdown').innerHTML = this.liabilities.map(liability => `
-                        <div class="category-item expense">
-                            <div>
-                                <div class="category-name">${liability.name}</div>
-                                <div class="card-label">${this.getLiabilityCategoryLabel(liability.category)}</div>
-                            </div>
-                            <div class="category-amount" style="color: var(--danger);">${this.formatCurrency(liability.value)}</div>
-                        </div>
-                    `).join('')
-                }
+                const assetRows = assetCategories.map(category => `
+                    <tr>
+                        <td>${category.label}</td>
+                        <td>${this.formatCurrency(getCategoryTotal(this.assets, category.key))}</td>
+                    </tr>
+                `).join('')
 
-                // Budget breakdown
-                if (this.income.length === 0 && this.expenses.length === 0) {
-                    document.getElementById('budgetBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">Inga budgetposter ännu. Skapa månadsinkomst och månatliga utgifter.</p>'
-                } else {
-                    const summaryHtml = `
-                        <div class="summary-box">
-                            <div class="summary-row">
-                                <span>Månadsinkomst</span>
-                                <span class="summary-value amount positive">${this.formatCurrency(income)}</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Månatliga utgifter</span>
-                                <span class="summary-value amount negative">${this.formatCurrency(expenses)}</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Netto</span>
-                                <span class="summary-value" style="color: var(--accent);">${this.formatCurrency(income - expenses)}</span>
-                            </div>
-                        </div>
-                    `
+                const liabilityRows = liabilityCategories.map(category => `
+                    <tr>
+                        <td>${category.label}</td>
+                        <td class="statement-value-negative">${this.formatCurrency(getCategoryTotal(this.liabilities, category.key))}</td>
+                    </tr>
+                `).join('')
 
-                    const incomeHtml = this.income.map(item => `
-                        <div class="category-item income">
-                            <div class="category-name">+ ${item.name}</div>
-                            <div class="category-amount" style="color: var(--success);">${this.formatCurrency(item.amount)}</div>
+                document.getElementById('balanceSheet').innerHTML = `
+                    <div class="statement-columns">
+                        <div>
+                            <h3 class="statement-subtitle">Tillgångar</h3>
+                            <table class="statement-table">
+                                <tbody>
+                                    ${assetRows}
+                                    <tr class="statement-total-row">
+                                        <td>Tillgångar</td>
+                                        <td>${this.formatCurrency(totalAssets)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    `).join('')
-
-                    const expenseHtml = this.expenses.map(item => `
-                        <div class="category-item expense">
-                            <div class="category-name">- ${item.name}</div>
-                            <div class="category-amount" style="color: var(--danger);">${this.formatCurrency(item.amount)}</div>
+                        <div>
+                            <h3 class="statement-subtitle">Skulder</h3>
+                            <table class="statement-table">
+                                <tbody>
+                                    ${liabilityRows}
+                                    <tr class="statement-total-row">
+                                        <td>Skulder</td>
+                                        <td class="statement-value-negative">${this.formatCurrency(totalLiabilities)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    `).join('')
+                    </div>
+                    <table class="statement-table" style="margin-top: 1.5rem;">
+                        <tbody>
+                            <tr class="statement-net-row">
+                                <td>Nettovärde</td>
+                                <td class="${netWorth >= 0 ? 'statement-value-positive' : 'statement-value-negative'}">${this.formatCurrency(netWorth)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `
 
-                    document.getElementById('budgetBreakdown').innerHTML = summaryHtml + incomeHtml + expenseHtml
-                }
+                document.getElementById('incomeStatement').innerHTML = `
+                    <table class="statement-table">
+                        <tbody>
+                            <tr>
+                                <td>Inkomster</td>
+                                <td class="statement-value-positive">${this.formatCurrency(income)}</td>
+                            </tr>
+                            <tr>
+                                <td>Utgifter</td>
+                                <td class="statement-value-negative">${this.formatCurrency(expenses)}</td>
+                            </tr>
+                            <tr class="statement-net-row">
+                                <td>Netto</td>
+                                <td class="${income - expenses >= 0 ? 'statement-value-positive' : 'statement-value-negative'}">${this.formatCurrency(income - expenses)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `
             }
 
             renderAssets() {
