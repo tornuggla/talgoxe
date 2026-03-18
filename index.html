@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Finance</title>
+    <title>Privatekonomi</title>
     <style>
         * {
             margin: 0;
@@ -41,18 +41,25 @@
         header {
             background-color: white;
             border-bottom: 1px solid var(--border);
-            padding: 1.5rem 0;
+            padding: 1rem 0;
             margin-bottom: 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
         h1 {
             font-size: 1.75rem;
             font-weight: 300;
             letter-spacing: 0.5px;
-            margin-bottom: 1rem;
+            margin: 0;
         }
 
         /* Navigation */
@@ -60,6 +67,7 @@
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
+            margin-top: 1rem;
         }
 
         .nav-btn {
@@ -116,8 +124,12 @@
 
         @media (min-width: 768px) {
             .dashboard-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(3, 1fr);
             }
+        }
+
+        .dashboard-grid .card.full-width {
+            grid-column: 1 / -1;
         }
 
         .card {
@@ -407,34 +419,17 @@
                 display: block;
             }
 
-            header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            h1 {
-                margin-bottom: 0;
-            }
-
             nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: white;
-                border-bottom: 1px solid var(--border);
-                padding: 1rem;
-                display: flex;
+                display: none;
                 flex-direction: column;
                 gap: 0.5rem;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.3s ease;
+                margin-top: 0.75rem;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--border);
             }
 
             nav.active {
-                max-height: 500px;
+                display: flex;
             }
 
             .nav-btn {
@@ -445,16 +440,19 @@
     </style>
 </head>
 <body>
-    <header class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1>Personal Finance</h1>
+    <header>
+        <div class="container">
+        <div class="header-inner">
+            <h1>Privatekonomi</h1>
             <button class="menu-toggle" id="menuToggle">☰</button>
         </div>
         <nav id="mainNav">
-            <button class="nav-btn active" data-section="dashboard">Dashboard</button>
-            <button class="nav-btn" data-section="assets">Assets</button>
+            <button class="nav-btn active" data-section="dashboard">Översikt</button>
+            <button class="nav-btn" data-section="assets">Tillgångar</button>
+            <button class="nav-btn" data-section="liabilities">Skulder</button>
             <button class="nav-btn" data-section="budget">Budget</button>
         </nav>
+        </div>
     </header>
 
     <main class="container">
@@ -462,41 +460,60 @@
         <section id="dashboard" class="section active">
             <div class="dashboard-grid">
                 <div class="card">
-                    <h2>Total Assets</h2>
-                    <div class="card-stat" id="totalAssets">$0</div>
-                    <div class="card-label">All cash, savings, investments & property</div>
+                    <h2>Tillgångar</h2>
+                    <div class="card-stat" id="totalAssets">0 kr</div>
+                    <div class="card-label">Kontanter, sparande, investeringar och fastighet</div>
                 </div>
 
                 <div class="card">
-                    <h2>Monthly Summary</h2>
+                    <h2>Skulder</h2>
+                    <div class="card-stat amount negative" id="totalLiabilities">0 kr</div>
+                    <div class="card-label">Bolån, billån, övriga lån och kreditkort</div>
+                </div>
+
+                <div class="card">
+                    <h2>Nettovärde</h2>
+                    <div class="card-stat" id="netWorth">0 kr</div>
+                    <div class="card-label">Tillgångar minus skulder</div>
+                </div>
+
+                <div class="card full-width">
+                    <h2>Balansräkning</h2>
                     <div style="margin-top: 1rem;">
                         <div class="summary-row">
-                            <span>Income:</span>
-                            <span class="summary-value amount positive" id="monthlyIncome">$0</span>
+                            <span>Tillgångar</span>
+                            <span class="summary-value amount positive" id="balanceAssets">0 kr</span>
                         </div>
                         <div class="summary-row">
-                            <span>Expenses:</span>
-                            <span class="summary-value amount negative" id="monthlyExpenses">$0</span>
+                            <span>Skulder</span>
+                            <span class="summary-value amount negative" id="balanceLiabilities">0 kr</span>
                         </div>
                         <div class="summary-row">
-                            <span>Net:</span>
-                            <span class="summary-value" id="monthlyNet" style="color: var(--accent);">$0</span>
+                            <span>Nettovärde</span>
+                            <span class="summary-value" id="balanceNetWorth" style="color: var(--accent);">0 kr</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h2>Assets Breakdown</h2>
+                <h2>Fördelning av tillgångar</h2>
                 <div id="assetsBreakdown" class="category-list">
-                    <p class="empty-state" style="padding: 2rem;">No assets yet. Add your first asset to get started.</p>
+                    <p class="empty-state" style="padding: 2rem;">Inga tillgångar ännu. Lägg till din första post för att komma igång.</p>
                 </div>
             </div>
 
             <div class="card" style="margin-top: 2rem;">
-                <h2>Budget Breakdown</h2>
+                <h2>Fördelning av skulder</h2>
+                <div id="liabilitiesBreakdown" class="category-list">
+                    <p class="empty-state" style="padding: 2rem;">Inga skulder ännu. Lägg till din första post för att komma igång.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h2>Budgetöversikt</h2>
                 <div id="budgetBreakdown">
-                    <p class="empty-state" style="padding: 2rem;">No budget items yet. Create income and expense categories.</p>
+                    <p class="empty-state" style="padding: 2rem;">Inga budgetposter ännu. Skapa månadsinkomst och månatliga utgifter.</p>
                 </div>
             </div>
         </section>
@@ -504,37 +521,74 @@
         <!-- Assets Section -->
         <section id="assets" class="section">
             <div class="card">
-                <h2>Manage Assets</h2>
+                <h2>Hantera tillgångar</h2>
                 <form id="assetForm">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="assetName">Asset Name</label>
-                            <input type="text" id="assetName" placeholder="e.g., Checking Account" required>
+                            <label for="assetName">Namn</label>
+                            <input type="text" id="assetName" placeholder="t.ex. Lönekonto" required>
                         </div>
                         <div class="form-group">
-                            <label for="assetCategory">Category</label>
+                            <label for="assetCategory">Kategori</label>
                             <select id="assetCategory" required>
-                                <option value="">Select category</option>
-                                <option value="cash">Cash</option>
-                                <option value="savings">Savings</option>
-                                <option value="investments">Investments</option>
-                                <option value="property">Property</option>
-                                <option value="other">Other</option>
+                                <option value="">Välj kategori</option>
+                                <option value="cash">Kontanter</option>
+                                <option value="savings">Sparande</option>
+                                <option value="investments">Investeringar</option>
+                                <option value="property">Fastighet</option>
+                                <option value="other">Övrigt</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="assetValue">Value</label>
-                        <input type="number" id="assetValue" placeholder="0.00" step="0.01" required>
+                        <label for="assetValue">Värde</label>
+                        <input type="number" id="assetValue" placeholder="0" step="0.01" required>
                     </div>
-                    <button type="submit" class="btn-primary">Add Asset</button>
+                    <button type="submit" class="btn-primary">Lägg till</button>
                 </form>
             </div>
 
             <div class="card" style="margin-top: 2rem;">
-                <h2>Your Assets</h2>
+                <h2>Dina tillgångar</h2>
                 <div id="assetsList">
-                    <p class="empty-state">No assets yet. Add one above.</p>
+                    <p class="empty-state">Inga tillgångar ännu. Lägg till en ovan.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Liabilities Section -->
+        <section id="liabilities" class="section">
+            <div class="card">
+                <h2>Hantera skulder</h2>
+                <form id="liabilityForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="liabilityName">Namn</label>
+                            <input type="text" id="liabilityName" placeholder="t.ex. Bolån hos banken" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="liabilityCategory">Kategori</label>
+                            <select id="liabilityCategory" required>
+                                <option value="">Välj kategori</option>
+                                <option value="mortgage">Bolån</option>
+                                <option value="car-loan">Billån</option>
+                                <option value="other-loans">Övriga lån</option>
+                                <option value="credit-card">Kreditkort</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="liabilityValue">Belopp</label>
+                        <input type="number" id="liabilityValue" placeholder="0" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Lägg till</button>
+                </form>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h2>Dina skulder</h2>
+                <div id="liabilitiesList">
+                    <p class="empty-state">Inga skulder ännu. Lägg till en ovan.</p>
                 </div>
             </div>
         </section>
@@ -542,50 +596,50 @@
         <!-- Budget Section -->
         <section id="budget" class="section">
             <div class="card">
-                <h2>Add Income Category</h2>
+                <h2>Lägg till månadsinkomst</h2>
                 <form id="incomeForm">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="incomeName">Income Source</label>
-                            <input type="text" id="incomeName" placeholder="e.g., Salary" required>
+                            <label for="incomeName">Namn</label>
+                            <input type="text" id="incomeName" placeholder="t.ex. Lön" required>
                         </div>
                         <div class="form-group">
-                            <label for="incomeAmount">Monthly Amount</label>
-                            <input type="number" id="incomeAmount" placeholder="0.00" step="0.01" required>
+                            <label for="incomeAmount">Månadsinkomst</label>
+                            <input type="number" id="incomeAmount" placeholder="0" step="0.01" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn-primary">Add Income</button>
+                    <button type="submit" class="btn-primary">Lägg till</button>
                 </form>
             </div>
 
             <div class="card" style="margin-top: 2rem;">
-                <h2>Income Categories</h2>
+                <h2>Månadsinkomst</h2>
                 <div id="incomeList">
-                    <p class="empty-state">No income categories yet. Add one above.</p>
+                    <p class="empty-state">Ingen månadsinkomst ännu. Lägg till en ovan.</p>
                 </div>
             </div>
 
             <div class="card" style="margin-top: 2rem;">
-                <h2>Add Expense Category</h2>
+                <h2>Lägg till månatliga utgifter</h2>
                 <form id="expenseForm">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="expenseName">Expense Category</label>
-                            <input type="text" id="expenseName" placeholder="e.g., Rent" required>
+                            <label for="expenseName">Namn</label>
+                            <input type="text" id="expenseName" placeholder="t.ex. Hyra" required>
                         </div>
                         <div class="form-group">
-                            <label for="expenseAmount">Monthly Amount</label>
-                            <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" required>
+                            <label for="expenseAmount">Månatliga utgifter</label>
+                            <input type="number" id="expenseAmount" placeholder="0" step="0.01" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn-primary">Add Expense</button>
+                    <button type="submit" class="btn-primary">Lägg till</button>
                 </form>
             </div>
 
             <div class="card" style="margin-top: 2rem;">
-                <h2>Expense Categories</h2>
+                <h2>Månatliga utgifter</h2>
                 <div id="expenseList">
-                    <p class="empty-state">No expense categories yet. Add one above.</p>
+                    <p class="empty-state">Inga månatliga utgifter ännu. Lägg till en ovan.</p>
                 </div>
             </div>
         </section>
@@ -596,6 +650,7 @@
         class FinanceApp {
             constructor() {
                 this.assets = []
+                this.liabilities = []
                 this.income = []
                 this.expenses = []
                 this.loadFromLocalStorage()
@@ -611,7 +666,7 @@
                 // Navigation
                 document.querySelectorAll('.nav-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        this.switchSection(e.target.dataset.section)
+                        this.switchSection(e.currentTarget.dataset.section, e.currentTarget)
                         document.getElementById('mainNav').classList.remove('active')
                     })
                 })
@@ -627,6 +682,11 @@
                     this.addAsset()
                 })
 
+                document.getElementById('liabilityForm').addEventListener('submit', (e) => {
+                    e.preventDefault()
+                    this.addLiability()
+                })
+
                 document.getElementById('incomeForm').addEventListener('submit', (e) => {
                     e.preventDefault()
                     this.addIncome()
@@ -638,11 +698,13 @@
                 })
             }
 
-            switchSection(sectionId) {
+            switchSection(sectionId, clickedButton) {
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'))
                 document.getElementById(sectionId).classList.add('active')
-                event.target.classList.add('active')
+                if (clickedButton) {
+                    clickedButton.classList.add('active')
+                }
             }
 
             addAsset() {
@@ -658,6 +720,21 @@
                 this.renderAllSections()
 
                 document.getElementById('assetForm').reset()
+            }
+
+            addLiability() {
+                const liability = {
+                    id: Date.now(),
+                    name: document.getElementById('liabilityName').value,
+                    category: document.getElementById('liabilityCategory').value,
+                    value: parseFloat(document.getElementById('liabilityValue').value)
+                }
+
+                this.liabilities.push(liability)
+                this.saveToLocalStorage()
+                this.renderAllSections()
+
+                document.getElementById('liabilityForm').reset()
             }
 
             addIncome() {
@@ -694,6 +771,12 @@
                 this.renderAllSections()
             }
 
+            deleteLiability(id) {
+                this.liabilities = this.liabilities.filter(l => l.id !== id)
+                this.saveToLocalStorage()
+                this.renderAllSections()
+            }
+
             deleteIncome(id) {
                 this.income = this.income.filter(i => i.id !== id)
                 this.saveToLocalStorage()
@@ -710,6 +793,10 @@
                 return this.assets.reduce((sum, asset) => sum + asset.value, 0)
             }
 
+            calculateTotalLiabilities() {
+                return this.liabilities.reduce((sum, liability) => sum + liability.value, 0)
+            }
+
             calculateTotalIncome() {
                 return this.income.reduce((sum, item) => sum + item.amount, 0)
             }
@@ -719,48 +806,110 @@
             }
 
             formatCurrency(amount) {
-                return new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                }).format(amount)
+                const formattedNumber = new Intl.NumberFormat('sv-SE', {
+                    minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+                    maximumFractionDigits: 2
+                }).format(amount).replace(/\u00A0/g, ' ')
+
+                return `${formattedNumber} kr`
+            }
+
+            getAssetCategoryLabel(category) {
+                const labels = {
+                    cash: 'Kontanter',
+                    savings: 'Sparande',
+                    investments: 'Investeringar',
+                    property: 'Fastighet',
+                    other: 'Övrigt'
+                }
+
+                return labels[category] || category
+            }
+
+            getLiabilityCategoryLabel(category) {
+                const labels = {
+                    mortgage: 'Bolån',
+                    'car-loan': 'Billån',
+                    'other-loans': 'Övriga lån',
+                    'credit-card': 'Kreditkort'
+                }
+
+                return labels[category] || category
             }
 
             renderAllSections() {
                 this.renderDashboard()
                 this.renderAssets()
+                this.renderLiabilities()
                 this.renderBudget()
             }
 
             renderDashboard() {
                 // Update totals
-                document.getElementById('totalAssets').textContent = this.formatCurrency(this.calculateTotalAssets())
-
+                const totalAssets = this.calculateTotalAssets()
+                const totalLiabilities = this.calculateTotalLiabilities()
+                const netWorth = totalAssets - totalLiabilities
                 const income = this.calculateTotalIncome()
                 const expenses = this.calculateTotalExpenses()
 
-                document.getElementById('monthlyIncome').textContent = this.formatCurrency(income)
-                document.getElementById('monthlyExpenses').textContent = this.formatCurrency(expenses)
-                document.getElementById('monthlyNet').textContent = this.formatCurrency(income - expenses)
+                document.getElementById('totalAssets').textContent = this.formatCurrency(totalAssets)
+                document.getElementById('totalLiabilities').textContent = this.formatCurrency(totalLiabilities)
+                document.getElementById('netWorth').textContent = this.formatCurrency(netWorth)
+                document.getElementById('balanceAssets').textContent = this.formatCurrency(totalAssets)
+                document.getElementById('balanceLiabilities').textContent = this.formatCurrency(totalLiabilities)
+                document.getElementById('balanceNetWorth').textContent = this.formatCurrency(netWorth)
 
                 // Assets breakdown
                 if (this.assets.length === 0) {
-                    document.getElementById('assetsBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">No assets yet. Add your first asset to get started.</p>'
+                    document.getElementById('assetsBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">Inga tillgångar ännu. Lägg till din första post för att komma igång.</p>'
                 } else {
                     document.getElementById('assetsBreakdown').innerHTML = this.assets.map(asset => `
                         <div class="category-item">
                             <div>
                                 <div class="category-name">${asset.name}</div>
-                                <div class="card-label">${asset.category}</div>
+                                <div class="card-label">${this.getAssetCategoryLabel(asset.category)}</div>
                             </div>
                             <div class="category-amount">${this.formatCurrency(asset.value)}</div>
                         </div>
                     `).join('')
                 }
 
+                // Liabilities breakdown
+                if (this.liabilities.length === 0) {
+                    document.getElementById('liabilitiesBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">Inga skulder ännu. Lägg till din första post för att komma igång.</p>'
+                } else {
+                    document.getElementById('liabilitiesBreakdown').innerHTML = this.liabilities.map(liability => `
+                        <div class="category-item expense">
+                            <div>
+                                <div class="category-name">${liability.name}</div>
+                                <div class="card-label">${this.getLiabilityCategoryLabel(liability.category)}</div>
+                            </div>
+                            <div class="category-amount" style="color: var(--danger);">${this.formatCurrency(liability.value)}</div>
+                        </div>
+                    `).join('')
+                }
+
                 // Budget breakdown
                 if (this.income.length === 0 && this.expenses.length === 0) {
-                    document.getElementById('budgetBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">No budget items yet. Create income and expense categories.</p>'
+                    document.getElementById('budgetBreakdown').innerHTML = '<p class="empty-state" style="padding: 2rem;">Inga budgetposter ännu. Skapa månadsinkomst och månatliga utgifter.</p>'
                 } else {
+                    const summaryHtml = `
+                        <div class="summary-box">
+                            <div class="summary-row">
+                                <span>Månadsinkomst</span>
+                                <span class="summary-value amount positive">${this.formatCurrency(income)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Månatliga utgifter</span>
+                                <span class="summary-value amount negative">${this.formatCurrency(expenses)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Netto</span>
+                                <span class="summary-value" style="color: var(--accent);">${this.formatCurrency(income - expenses)}</span>
+                            </div>
+                        </div>
+                    `
+
                     const incomeHtml = this.income.map(item => `
                         <div class="category-item income">
                             <div class="category-name">+ ${item.name}</div>
@@ -775,13 +924,13 @@
                         </div>
                     `).join('')
 
-                    document.getElementById('budgetBreakdown').innerHTML = incomeHtml + expenseHtml
+                    document.getElementById('budgetBreakdown').innerHTML = summaryHtml + incomeHtml + expenseHtml
                 }
             }
 
             renderAssets() {
                 if (this.assets.length === 0) {
-                    document.getElementById('assetsList').innerHTML = '<p class="empty-state">No assets yet. Add one above.</p>'
+                    document.getElementById('assetsList').innerHTML = '<p class="empty-state">Inga tillgångar ännu. Lägg till en ovan.</p>'
                 } else {
                     const categoryGroups = {}
                     this.assets.forEach(asset => {
@@ -796,12 +945,12 @@
                         const categoryTotal = items.reduce((sum, item) => sum + item.value, 0)
                         html += `
                             <div style="margin-bottom: 2rem;">
-                                <h3 style="font-size: 0.95rem; font-weight: 600; text-transform: uppercase; color: var(--secondary); margin-bottom: 1rem; letter-spacing: 0.5px;">${category}</h3>
+                                <h3 style="font-size: 0.95rem; font-weight: 600; text-transform: uppercase; color: var(--secondary); margin-bottom: 1rem; letter-spacing: 0.5px;">${this.getAssetCategoryLabel(category)}</h3>
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Value</th>
+                                            <th>Namn</th>
+                                            <th>Värde</th>
                                             <th style="width: 80px;"></th>
                                         </tr>
                                     </thead>
@@ -810,11 +959,11 @@
                                             <tr>
                                                 <td>${asset.name}</td>
                                                 <td class="amount">${this.formatCurrency(asset.value)}</td>
-                                                <td><button class="btn-danger" onclick="app.deleteAsset(${asset.id})">Delete</button></td>
+                                                <td><button class="btn-danger" onclick="app.deleteAsset(${asset.id})">Ta bort</button></td>
                                             </tr>
                                         `).join('')}
                                         <tr style="background-color: var(--lighter);">
-                                            <td style="font-weight: 600;">Total</td>
+                                            <td style="font-weight: 600;">Summa</td>
                                             <td style="font-weight: 600;">${this.formatCurrency(categoryTotal)}</td>
                                             <td></td>
                                         </tr>
@@ -828,7 +977,7 @@
                     html += `
                         <div class="summary-box">
                             <div class="summary-row">
-                                <span style="font-size: 1.1rem;">Total Assets</span>
+                                <span style="font-size: 1.1rem;">Tillgångar</span>
                                 <span class="summary-value" style="font-size: 1.1rem; color: var(--accent);">${this.formatCurrency(total)}</span>
                             </div>
                         </div>
@@ -838,18 +987,77 @@
                 }
             }
 
+            renderLiabilities() {
+                if (this.liabilities.length === 0) {
+                    document.getElementById('liabilitiesList').innerHTML = '<p class="empty-state">Inga skulder ännu. Lägg till en ovan.</p>'
+                } else {
+                    const categoryGroups = {}
+                    this.liabilities.forEach(liability => {
+                        if (!categoryGroups[liability.category]) {
+                            categoryGroups[liability.category] = []
+                        }
+                        categoryGroups[liability.category].push(liability)
+                    })
+
+                    let html = ''
+                    Object.entries(categoryGroups).forEach(([category, items]) => {
+                        const categoryTotal = items.reduce((sum, item) => sum + item.value, 0)
+                        html += `
+                            <div style="margin-bottom: 2rem;">
+                                <h3 style="font-size: 0.95rem; font-weight: 600; text-transform: uppercase; color: var(--secondary); margin-bottom: 1rem; letter-spacing: 0.5px;">${this.getLiabilityCategoryLabel(category)}</h3>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Namn</th>
+                                            <th>Belopp</th>
+                                            <th style="width: 80px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${items.map(liability => `
+                                            <tr>
+                                                <td>${liability.name}</td>
+                                                <td class="amount negative">${this.formatCurrency(liability.value)}</td>
+                                                <td><button class="btn-danger" onclick="app.deleteLiability(${liability.id})">Ta bort</button></td>
+                                            </tr>
+                                        `).join('')}
+                                        <tr style="background-color: var(--lighter);">
+                                            <td style="font-weight: 600;">Summa</td>
+                                            <td style="font-weight: 600; color: var(--danger);">${this.formatCurrency(categoryTotal)}</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `
+                    })
+
+                    const total = this.calculateTotalLiabilities()
+                    html += `
+                        <div class="summary-box">
+                            <div class="summary-row">
+                                <span style="font-size: 1.1rem;">Skulder</span>
+                                <span class="summary-value amount negative" style="font-size: 1.1rem;">${this.formatCurrency(total)}</span>
+                            </div>
+                        </div>
+                    `
+
+                    document.getElementById('liabilitiesList').innerHTML = html
+                }
+            }
+
             renderBudget() {
                 // Income
                 if (this.income.length === 0) {
-                    document.getElementById('incomeList').innerHTML = '<p class="empty-state">No income categories yet. Add one above.</p>'
+                    document.getElementById('incomeList').innerHTML = '<p class="empty-state">Ingen månadsinkomst ännu. Lägg till en ovan.</p>'
                 } else {
                     const incomeTotal = this.calculateTotalIncome()
                     document.getElementById('incomeList').innerHTML = `
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Source</th>
-                                    <th>Monthly Amount</th>
+                                    <th>Namn</th>
+                                    <th>Månadsinkomst</th>
                                     <th style="width: 80px;"></th>
                                 </tr>
                             </thead>
@@ -858,11 +1066,11 @@
                                     <tr>
                                         <td>${item.name}</td>
                                         <td class="amount positive">${this.formatCurrency(item.amount)}</td>
-                                        <td><button class="btn-danger" onclick="app.deleteIncome(${item.id})">Delete</button></td>
+                                        <td><button class="btn-danger" onclick="app.deleteIncome(${item.id})">Ta bort</button></td>
                                     </tr>
                                 `).join('')}
                                 <tr style="background-color: var(--lighter);">
-                                    <td style="font-weight: 600;">Total Income</td>
+                                    <td style="font-weight: 600;">Månadsinkomst</td>
                                     <td style="font-weight: 600; color: var(--success);">${this.formatCurrency(incomeTotal)}</td>
                                     <td></td>
                                 </tr>
@@ -873,15 +1081,15 @@
 
                 // Expenses
                 if (this.expenses.length === 0) {
-                    document.getElementById('expenseList').innerHTML = '<p class="empty-state">No expense categories yet. Add one above.</p>'
+                    document.getElementById('expenseList').innerHTML = '<p class="empty-state">Inga månatliga utgifter ännu. Lägg till en ovan.</p>'
                 } else {
                     const expenseTotal = this.calculateTotalExpenses()
                     document.getElementById('expenseList').innerHTML = `
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Category</th>
-                                    <th>Monthly Amount</th>
+                                    <th>Namn</th>
+                                    <th>Månatliga utgifter</th>
                                     <th style="width: 80px;"></th>
                                 </tr>
                             </thead>
@@ -890,11 +1098,11 @@
                                     <tr>
                                         <td>${item.name}</td>
                                         <td class="amount negative">${this.formatCurrency(item.amount)}</td>
-                                        <td><button class="btn-danger" onclick="app.deleteExpense(${item.id})">Delete</button></td>
+                                        <td><button class="btn-danger" onclick="app.deleteExpense(${item.id})">Ta bort</button></td>
                                     </tr>
                                 `).join('')}
                                 <tr style="background-color: var(--lighter);">
-                                    <td style="font-weight: 600;">Total Expenses</td>
+                                    <td style="font-weight: 600;">Månatliga utgifter</td>
                                     <td style="font-weight: 600; color: var(--danger);">${this.formatCurrency(expenseTotal)}</td>
                                     <td></td>
                                 </tr>
@@ -907,6 +1115,7 @@
             saveToLocalStorage() {
                 localStorage.setItem('financeData', JSON.stringify({
                     assets: this.assets,
+                    liabilities: this.liabilities,
                     income: this.income,
                     expenses: this.expenses
                 }))
@@ -917,6 +1126,7 @@
                 if (data) {
                     const parsed = JSON.parse(data)
                     this.assets = parsed.assets || []
+                    this.liabilities = parsed.liabilities || []
                     this.income = parsed.income || []
                     this.expenses = parsed.expenses || []
                 }
